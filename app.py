@@ -1,4 +1,3 @@
-# =========================================================
 # FILE: app.py
 #
 # PURPOSE:
@@ -71,3 +70,30 @@ def predict(data: dict):
     return {
         "prediction": int(prediction)
     }
+from fastapi import FastAPI
+import joblib
+import numpy as np
+import json
+
+# Load the model and metrics saved by train.py
+model = joblib.load("model.pkl")
+
+with open("metrics.json") as f:
+    metrics = json.load(f)
+
+app = FastAPI()
+
+@app.get("/metrics")
+def get_metrics():
+    return {
+        "roll_no": "FA23-BAI-055",
+        "accuracy": metrics.get("accuracy"),
+        "dataset_version": metrics.get("dataset_version", 1),
+        "status": "success"
+    }
+
+@app.post("/predict")
+def predict(data: dict):
+    features = np.array(data["features"]).reshape(1, -1)
+    prediction = model.predict(features)
+    return {"prediction": int(prediction[0])}
