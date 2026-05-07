@@ -1,4 +1,4 @@
-# chnge
+# change
 # FILE: app.py
 #
 # PURPOSE:
